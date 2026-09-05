@@ -23,7 +23,6 @@ const isOrdered = (num1, num2) => {
   return num1 <= num2;
 };
 
-// Returns true if a swap happened, so callers can track it
 const swapElements = (intArray, index) => {
   if (!isOrdered(intArray[index], intArray[index + 1])) {
     [intArray[index], intArray[index + 1]] = [
@@ -67,7 +66,6 @@ sortBtn.addEventListener("click", () => {
   const spans = startingArray.querySelectorAll("span");
   const arr = Array.from(spans, (span) => Number(span.textContent));
 
-  // Starting step: highlight the first pair directly on #starting-array
   highlightCurrentEls(startingArray, 0);
 
   let isFirstComparison = true;
@@ -78,7 +76,6 @@ sortBtn.addEventListener("click", () => {
 
     for (let j = 0; j < arr.length - 1; j++) {
       if (isFirstComparison) {
-        // This exact comparison is already shown by #starting-array — don't duplicate it
         isFirstComparison = false;
       } else {
         const stepContainer = generateContainer();
@@ -87,7 +84,6 @@ sortBtn.addEventListener("click", () => {
         arrayContainer.appendChild(stepContainer);
       }
 
-      // Swap decision made now; its effect only becomes visible in the NEXT div created
       if (swapElements(arr, j)) swapped = true;
     }
   } while (swapped);
