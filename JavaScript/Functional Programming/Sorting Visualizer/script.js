@@ -1,9 +1,14 @@
+const arrayContainer = document.getElementById("array-container");
+const generateBtn = document.getElementById("generate-btn");
+const sortBtn = document.getElementById("sort-btn");
+const startingArray = document.getElementById("starting-array");
+
 const generateElement = () => {
   return Math.floor(Math.random() * 100) + 1;
 };
 
 const generateArray = () => {
-  return Array.from({ length: 5 }, () => generateElement());
+  return Array.from({ length: 5 }, generateElement);
 };
 
 const generateContainer = () => {
@@ -12,11 +17,11 @@ const generateContainer = () => {
 
 const fillArrContainer = (containerElement, intArray) => {
   containerElement.innerHTML = "";
-  for (let i = 0; i < 5; i++) {
+  intArray.forEach((num) => {
     const span = document.createElement("span");
-    span.textContent = intArray[i];
+    span.textContent = num;
     containerElement.appendChild(span);
-  }
+  });
 };
 
 const isOrdered = (num1, num2) => {
@@ -29,62 +34,47 @@ const swapElements = (intArray, index) => {
       intArray[index + 1],
       intArray[index],
     ];
-    return true;
   }
-  return false;
 };
 
 const highlightCurrentEls = (element, index) => {
   const children = element.children;
-  if (children[index]) {
-    children[index].style.border = "2px dashed red";
-  }
-  if (children[index + 1]) {
-    children[index + 1].style.border = "2px dashed red";
-  }
+  children[index].style.border = "2px dashed red";
+  children[index + 1].style.border = "2px dashed red";
 };
-
-const generateBtn = document.getElementById("generate-btn");
-const sortBtn = document.getElementById("sort-btn");
-const arrayContainer = document.getElementById("array-container");
-const startingArray = document.getElementById("starting-array");
 
 generateBtn.addEventListener("click", () => {
   Array.from(arrayContainer.children).forEach((child) => {
     if (child !== startingArray) child.remove();
   });
-
-  const randomArray = generateArray();
-  fillArrContainer(startingArray, randomArray);
+  fillArrContainer(startingArray, generateArray());
 });
 
-sortBtn.addEventListener("click", () => {
-  Array.from(arrayContainer.children).forEach((child) => {
-    if (child !== startingArray) child.remove();
-  });
-
-  const spans = startingArray.querySelectorAll("span");
-  const arr = Array.from(spans, (span) => Number(span.textContent));
-
+const bubbleSort = () => {
   highlightCurrentEls(startingArray, 0);
 
-  let isFirstComparison = true;
-  let swapped;
+  let stillSwapping = true;
 
-  do {
-    swapped = false;
+  while (stillSwapping) {
+    const lastDiv = arrayContainer.lastElementChild;
+    const beforePass = Array.from(lastDiv.children).map((span) =>
+      Number(span.textContent),
+    );
+    const arr = [...beforePass];
 
-    for (let j = 0; j < arr.length - 1; j++) {
-      if (isFirstComparison) {
-        isFirstComparison = false;
-      } else {
-        const stepContainer = generateContainer();
-        fillArrContainer(stepContainer, arr);
-        highlightCurrentEls(stepContainer, j);
-        arrayContainer.appendChild(stepContainer);
-      }
+    for (let i = 0; i < arr.length - 1; i++) {
+      highlightCurrentEls(arrayContainer.lastElementChild, i);
+      swapElements(arr, i);
 
-      if (swapElements(arr, j)) swapped = true;
+      const stepContainer = generateContainer();
+      fillArrContainer(stepContainer, arr);
+      arrayContainer.appendChild(stepContainer);
     }
-  } while (swapped);
+
+    stillSwapping = !beforePass.every((val, i) => val === arr[i]);
+  }
+};
+
+sortBtn.addEventListener("click", () => {
+  bubbleSort();
 });
